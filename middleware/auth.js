@@ -8,9 +8,8 @@ const authUser = async (req, res, next) => {
     //     return res.json({ success: false, message: 'Not Authorized Login Again' })
     // }
     if (!token) {
-        // Allow guest users to proceed without setting `userId`
         req.body.userId = null;
-        return next();  // Continue to the next middleware
+        return next(); 
     }
     try {
 
