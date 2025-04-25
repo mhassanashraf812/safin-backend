@@ -1,5 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import productModel from "../models/productModel.js";
 import Stripe from 'stripe'
 import razorpay from 'razorpay'
 
@@ -35,7 +36,7 @@ const placeOrder = async (req,res) => {
         const newOrder = new orderModel(orderData)
         await newOrder.save()
 
-        await userModel.findByIdAndUpdate(userId,{cartData:{}})
+        await userModel.findByIdAndUpdate(userId,{cartData:[]})
 
         res.json({success:true,message:"Order Placed"})
 
@@ -191,8 +192,17 @@ const allOrders = async (req,res) => {
 
     try {
         
-        const orders = await orderModel.find({})
-        res.json({success:true,orders})
+        const orders = await orderModel.find({}).lean()
+        const updatedOrders = []
+        for (const order of orders){
+            const items = []
+            for (const item of order.items){
+                const product = await productModel.findById({_id: item._id}).lean()
+                items.push({...item, ...product})
+            }
+            updatedOrders.push({...order, items})
+        }
+        res.json({success:true,orders:updatedOrders})
 
     } catch (error) {
         console.log(error)
