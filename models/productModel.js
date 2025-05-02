@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
     collection: { type: String, required: true },
     soldOut: { type: Boolean, defualt: false },
     subCategory: { type: String, required: true },
-    sizes: { type: Array },
+    sizes: { type: Array ,  required: true},
     colors: { type: Array }, 
     bestseller: { type: Boolean },
     date: { type: Number, required: true }
